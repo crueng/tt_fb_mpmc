@@ -24,20 +24,18 @@ private:
 
 template<typename T>
 void SharedQueue<T>::push(T value) {
+	std::unique_lock lock(m_mutex);
    m_queue.push(std::move(value));
+	m_cv.notify_one();
 }
 
 template<typename T>
 T SharedQueue<T>::pop() {
    std::unique_lock lock(m_mutex);
-
    m_cv.wait(lock, [this] {
-      return m_queue.empty();
+      return !m_queue.empty();
    });
-
    T value = std::move(m_queue.front());
-   lock.unlock();
    m_queue.pop();
-
    return value;
 }

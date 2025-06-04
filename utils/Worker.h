@@ -11,9 +11,12 @@ class Worker {
 public:
    /// @brief Constructs a Worker with a given function.
    Worker(std::function<void()> func);
-
+	Worker(const Worker& copy);
+   ~Worker();
    /// @brief Starts the worker thread.
    void start();
+
+	void join();
 
 private:
    std::function<void()> m_func;
